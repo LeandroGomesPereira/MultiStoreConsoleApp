@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MultiStoreConsoleApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d40267b21fd4ecb1143388c58fedad37d94d4cf1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c30f829ad0f04ac6b126325c35a10658938a0204")]
 [assembly: System.Reflection.AssemblyProductAttribute("MultiStoreConsoleApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MultiStoreConsoleApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

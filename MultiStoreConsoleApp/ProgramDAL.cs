@@ -1,46 +1,26 @@
 ﻿using Microsoft.Data.SqlClient;
-using System.Data;
 
 namespace MultiStoreConsoleApp
 {
     public class ProgramDAL
     {
-        private readonly string _connectionString = "Server=localhost;Integrated security=SSPI;database=AvaliacaoMTP;TrustServerCertificate=True";
-
-        public void ExcluiTabela()
+        public void ExcluiTabela(SqlConnection sqlConnection, SqlTransaction transacao)
         {
             string query = @$"DROP TABLE stage.MultiStore";
 
-            SqlConnection sqlConnection = new SqlConnection(_connectionString);
+            SqlCommand sqlComando = new SqlCommand(query, sqlConnection, transacao);
 
-            SqlCommand sqlComando = new SqlCommand(query, sqlConnection);
-
-            try
-            {
-                sqlConnection.Open();
-                sqlComando.ExecuteNonQuery();
-                Console.WriteLine("Command executed correctly!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            finally
-            {
-                if (sqlConnection.State == ConnectionState.Open)
-                {
-                    sqlConnection.Close();
-                }
-            }
+            sqlComando.ExecuteNonQuery();
+            Console.WriteLine("Tabela Excluída com sucesso!");
         }
 
-        public void CriaTabela(List<string> nomeColunas, bool usaConfiguracaoPadrao)
+        public void CriaTabela(List<string> nomeColunas, bool usaConfiguracaoPadrao, SqlConnection sqlConnection, SqlTransaction transacao)
         {
-            string query = @$"CREATE TABLE stage.Teste";
+            string query = @$"CREATE TABLE stage.MultiStore";
             string queryColunas;
 
-            if (usaConfiguracaoPadrao)
-                queryColunas = "( " + string.Join(" varchar(100), ", nomeColunas) + " varchar(100));";
+            if (!usaConfiguracaoPadrao)
+                queryColunas = "( " + string.Join(" varchar(300), ", nomeColunas) + " varchar(100));";
             else
             {
                 queryColunas = @"
@@ -66,35 +46,32 @@ namespace MultiStoreConsoleApp
 	                	ProductID varchar(15),
 	                	Category varchar(50),
 	                	SubCategory varchar(50),
-	                	ProductName varchar(50),
+	                	ProductName varchar(500),
 	                	Sales decimal(18, 2),
 	                	Quantity int,
-	                	Discount int,
+	                	Discount decimal(18, 2),
 	                	Profit decimal(18, 4)
 	                );";
             }
 
-            SqlConnection sqlConnection = new SqlConnection(_connectionString);
+            SqlCommand sqlComando = new SqlCommand(query + queryColunas, sqlConnection, transacao);
+            
+            sqlComando.ExecuteNonQuery();
+            Console.WriteLine("Tabela Criada com sucesso!");
+        }
 
-            SqlCommand sqlComando = new SqlCommand(query + queryColunas, sqlConnection);
-
-            try
+        public void InsereDados(List<string> nomeColunas, List<List<string>> registros, SqlConnection sqlConnection, SqlTransaction transacao)
+        {
+            foreach (List<string> row in registros)
             {
-                sqlConnection.Open();
+                string query = @$"INSERT INTO stage.MultiStore ({string.Join(", ", nomeColunas)}) VALUES ('{string.Join("', '", row)}');";
+
+                SqlCommand sqlComando = new SqlCommand(query, sqlConnection, transacao);
+
                 sqlComando.ExecuteNonQuery();
-                Console.WriteLine("Command executed correctly!");
+                Console.WriteLine("Registros Inseridos com sucesso!");
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            finally
-            {
-                if (sqlConnection.State == ConnectionState.Open)
-                {
-                    sqlConnection.Close();
-                }
-            }
+
         }
     }
 }
